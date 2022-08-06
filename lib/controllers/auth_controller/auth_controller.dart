@@ -23,7 +23,7 @@ class AuthController extends GetxController {
   initialScreen(User? user) {
     user == null
         ? Get.offAll(() => LoginPage())
-        : Get.offAll(() => const HomePage());
+        : Get.offAll(() =>  HomePage());
   }
 
   void register(email, password) async {

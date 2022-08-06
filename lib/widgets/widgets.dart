@@ -1,5 +1,6 @@
 import 'package:firebase_app/constants/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class CustomTextFormField extends StatelessWidget {
   String hint;
@@ -42,5 +43,40 @@ class CustomTextFormField extends StatelessWidget {
         obscureText: obscure,
       ),
     );
+  }
+}
+
+class CustomFullScreenDialog {
+ static  showDialog() {
+    Get.dialog(
+      WillPopScope(
+        child: const Center(
+          child: CircularProgressIndicator(),
+        ),
+        onWillPop: () => Future.value(false),
+      ),
+      barrierDismissible: false,
+      barrierColor: Colors.blue.withOpacity(.3),
+      useSafeArea: true,
+    );
+  }
+
+  static void cancelDialog() {
+    Get.back();
+  }
+}
+
+class CustomSnackBar {
+  static void showSnackBar({
+    required BuildContext? context,
+    required String title,
+    required String message,
+    required Color backGround,
+  }) {
+    Get.snackbar(title, message,
+        snackPosition: SnackPosition.TOP, backgroundColor: white,
+        titleText: Text(title,style: TextStyle(fontSize: 16),),
+        messageText: Text(message),
+        );
   }
 }
