@@ -66,14 +66,13 @@ class HomePage extends StatelessWidget {
                     },
                     child: Card(
                       child: ListTile(
-                        leading: const Icon(Icons.add),
+                        leading: Image.network("https://images.unsplash.com/photo-1453728013993-6d66e9c9123a?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8dmlld3xlbnwwfHwwfHw%3D&w=1000&q=80"),
                         title: Text(documentSnapshot['name']),
                         subtitle: Text(documentSnapshot['number'].toString()),
                         trailing: IconButton(
                           icon: const Icon(Icons.delete),
                           onPressed: () {
                             controller.deleteDialog(documentSnapshot.id);
-                            
                           },
                         ),
                       ),
@@ -142,10 +141,10 @@ class HomePage extends StatelessWidget {
                         controller.nameController.text,
                         controller.numberController.text,
                         docId!,
-                        addEditFlag = 1);
+                        addEditFlag!);
                   },
                   //icon: const Icon(CupertinoIcons.person_add),
-                  child: Text(addEditFlag==1 ?'Add' : 'Update'),
+                  child: Text(addEditFlag == 1 ? 'Add' : 'Update'),
                 )
               ],
             ),

@@ -35,13 +35,13 @@ class HomeController extends GetxController {
 
 //code firestoreill save cheyan
   Future<void> saveUpadateEmployee(
-      String name, String number, String? docId, int aaddEditFlag) async {
+      String name, String number, String? docId, int addEditFlag) async {
     final isValid = formKey.currentState!.validate();
     if (!isValid) {
       return;
     }
     formKey.currentState!.save();
-    if (aaddEditFlag == 1) {
+    if (addEditFlag == 1) {
       CustomFullScreenDialog.showDialog();
       await collectionReference
           .add({'name': name, 'number': number}).whenComplete(() {
@@ -62,17 +62,18 @@ class HomeController extends GetxController {
             message: 'Something went wrong',
             backGround: Colors.red);
       });
-    } else if (aaddEditFlag == 2) {
+    } else if (addEditFlag == 2) {
       CustomFullScreenDialog.showDialog();
       await collectionReference
-          .add({'name': name, 'number': number}).whenComplete(() {
+          .doc(docId)
+          .update({'name': name, 'number': number}).whenComplete(() {
         CustomFullScreenDialog.cancelDialog();
         clearEditingController();
         Get.back();
         CustomSnackBar.showSnackBar(
             context: Get.context,
-            title: 'Employee added',
-            message: "Employee added sucessFully",
+            title: 'Employee updated',
+            message: "Employee updated sucessFully",
             backGround: Colors.green);
       });
       Future.error((error) {
@@ -81,7 +82,7 @@ class HomeController extends GetxController {
             context: Get.context,
             title: 'Error',
             message: 'Something went wrong',
-            backGround: Colors.red);
+            backGround: const Color.fromARGB(255, 250, 25, 9));
       });
     }
   }
@@ -90,15 +91,15 @@ class HomeController extends GetxController {
     Get.defaultDialog(
       title: 'Delete The data',
       titleStyle: const TextStyle(fontSize: 20),
-      middleText: 'Do yu want to delete the data',
+      middleText: 'Do yu want to delete the data ?',
       textCancel: 'cancel',
       textConfirm: 'confirm',
       confirmTextColor: Colors.black,
-      onCancel: () {},
       onConfirm: () {
         deleteItem(docId);
         Get.back();
       },
+      onCancel: () {},
     );
   }
 
