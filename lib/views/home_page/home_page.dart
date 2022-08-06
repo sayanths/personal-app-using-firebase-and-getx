@@ -20,6 +20,8 @@ class HomePage extends StatelessWidget {
           actions: [
             InkWell(
               onTap: () {
+                controller.nameController.clear();
+                controller.numberController.clear();
                 _bottomAddEditEmployeeView(
                     text: 'ADD', addEditFlag: 1, docId: '');
               },
@@ -66,7 +68,8 @@ class HomePage extends StatelessWidget {
                     },
                     child: Card(
                       child: ListTile(
-                        leading: Image.network("https://images.unsplash.com/photo-1453728013993-6d66e9c9123a?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8dmlld3xlbnwwfHwwfHw%3D&w=1000&q=80"),
+                        leading: Image.network(
+                            "https://images.unsplash.com/photo-1453728013993-6d66e9c9123a?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8dmlld3xlbnwwfHwwfHw%3D&w=1000&q=80"),
                         title: Text(documentSnapshot['name']),
                         subtitle: Text(documentSnapshot['number'].toString()),
                         trailing: IconButton(
