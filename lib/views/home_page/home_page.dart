@@ -8,16 +8,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class HomePage extends StatelessWidget {
-   HomePage({Key? key}) : super(key: key);
+  HomePage({Key? key}) : super(key: key);
 
-//   @override
-//   State<HomePage> createState() => _HomePageState();
-// }
+  HomeController controller = Get.put(HomeController());
 
-// class _HomePageState extends State<HomePage> {
-
-   HomeController controller = Get.put(HomeController());
- 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,7 +20,7 @@ class HomePage extends StatelessWidget {
           actions: [
             InkWell(
               onTap: () {
-                     _bottomAddEditEmployeeView(
+                _bottomAddEditEmployeeView(
                     text: 'ADD', addEditFlag: 1, docId: '');
               },
               child: const Padding(
@@ -59,14 +53,29 @@ class HomePage extends StatelessWidget {
                 itemBuilder: (BuildContext context, int index) {
                   final DocumentSnapshot documentSnapshot =
                       snapshot.data!.docs[index];
-                  return Card(
-                    child: ListTile(
-                      leading: const Icon(Icons.add),
-                      title:  Text(documentSnapshot['name']),
-                      subtitle:  Text(documentSnapshot['number'].toString()),
-                      trailing: IconButton(
-                        icon: const Icon(Icons.delete),
-                        onPressed: () {},
+                  return InkWell(
+                    onTap: () {
+                      controller.nameController.text = documentSnapshot['name'];
+                      controller.numberController.text =
+                          documentSnapshot['number'];
+
+                      _bottomAddEditEmployeeView(
+                          text: 'UPDATE',
+                          addEditFlag: 2,
+                          docId: documentSnapshot.id);
+                    },
+                    child: Card(
+                      child: ListTile(
+                        leading: const Icon(Icons.add),
+                        title: Text(documentSnapshot['name']),
+                        subtitle: Text(documentSnapshot['number'].toString()),
+                        trailing: IconButton(
+                          icon: const Icon(Icons.delete),
+                          onPressed: () {
+                            controller.deleteDialog(documentSnapshot.id);
+                            
+                          },
+                        ),
                       ),
                     ),
                   );
@@ -80,10 +89,9 @@ class HomePage extends StatelessWidget {
             }
           },
         ));
-
-        
   }
-   _bottomAddEditEmployeeView({String? text, int? addEditFlag, String? docId}) {
+
+  _bottomAddEditEmployeeView({String? text, int? addEditFlag, String? docId}) {
     Get.bottomSheet(Container(
       //height: 1000,
       color: white,
@@ -128,16 +136,17 @@ class HomePage extends StatelessWidget {
                     return controller.validateNumber(value!);
                   },
                 ),
-                ElevatedButton.icon(
-                    onPressed: () {
-                      controller.saveUpadateEmployee(
-                          controller.nameController.text,
-                          controller.numberController.text,
-                          docId!,
-                          addEditFlag!);
-                    },
-                    icon: const Icon(CupertinoIcons.person_add),
-                    label: const Text("Add"))
+                ElevatedButton(
+                  onPressed: () {
+                    controller.saveUpadateEmployee(
+                        controller.nameController.text,
+                        controller.numberController.text,
+                        docId!,
+                        addEditFlag = 1);
+                  },
+                  //icon: const Icon(CupertinoIcons.person_add),
+                  child: Text(addEditFlag==1 ?'Add' : 'Update'),
+                )
               ],
             ),
           ),

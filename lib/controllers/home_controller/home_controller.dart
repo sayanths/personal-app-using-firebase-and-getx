@@ -8,7 +8,7 @@ class HomeController extends GetxController {
   late TextEditingController nameController, numberController;
   FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
   late CollectionReference collectionReference;
-   final CollectionReference details =
+  final CollectionReference details =
       FirebaseFirestore.instance.collection('details');
 
   @override
@@ -62,16 +62,52 @@ class HomeController extends GetxController {
             message: 'Something went wrong',
             backGround: Colors.red);
       });
+    } else if (aaddEditFlag == 2) {
+      CustomFullScreenDialog.showDialog();
+      await collectionReference
+          .add({'name': name, 'number': number}).whenComplete(() {
+        CustomFullScreenDialog.cancelDialog();
+        clearEditingController();
+        Get.back();
+        CustomSnackBar.showSnackBar(
+            context: Get.context,
+            title: 'Employee added',
+            message: "Employee added sucessFully",
+            backGround: Colors.green);
+      });
+      Future.error((error) {
+        CustomFullScreenDialog.cancelDialog();
+        CustomSnackBar.showSnackBar(
+            context: Get.context,
+            title: 'Error',
+            message: 'Something went wrong',
+            backGround: Colors.red);
+      });
     }
   }
 
+  deleteDialog(String docId) {
+    Get.defaultDialog(
+      title: 'Delete The data',
+      titleStyle: const TextStyle(fontSize: 20),
+      middleText: 'Do yu want to delete the data',
+      textCancel: 'cancel',
+      textConfirm: 'confirm',
+      confirmTextColor: Colors.black,
+      onCancel: () {},
+      onConfirm: () {
+        deleteItem(docId);
+        Get.back();
+      },
+    );
+  }
 
-  
+  Future<void> deleteItem(String docId) async {
+    await details.doc(docId).delete();
+  }
 
   void clearEditingController() {
     nameController.clear();
     numberController.clear();
   }
-
-
 }
