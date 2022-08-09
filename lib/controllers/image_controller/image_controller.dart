@@ -1,13 +1,21 @@
-// import 'package:get/get.dart';
-// import 'package:image_picker/image_picker.dart';
+import 'dart:convert';
+import 'dart:io';
+import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 
-// class ImagePickController extends GetxController {
+class ImageController extends GetxController {
+  String? img = '';
+  pickimage() async {
+    final pickedImage =
+        await ImagePicker().pickImage(source: ImageSource.camera);
+    if (pickedImage == null) {
+      return;
+    } else {
+      final bytes = File(pickedImage.path).readAsBytesSync();
+      img = base64Encode(bytes);
+      update();
+    }
 
-//   var selectedImageSize
-//   pickImageFromCamera() async {
-//     var image = await ImagePicker().pickImage(source: ImageSource.camera);
-//     if (image == null) {
-//       return;
-//     } else {}
-//   }
-// }
+    // imageCache.clear();
+  }
+}

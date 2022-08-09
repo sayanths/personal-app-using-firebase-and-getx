@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_app/constants/constants.dart';
 import 'package:firebase_app/controllers/auth_controller/auth_controller.dart';
 import 'package:firebase_app/controllers/home_controller/home_controller.dart';
+import 'package:firebase_app/controllers/image_controller/image_controller.dart';
 import 'package:firebase_app/widgets/widgets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -10,24 +13,27 @@ import 'package:get/get.dart';
 class HomePage extends StatelessWidget {
   HomePage({Key? key}) : super(key: key);
 
-  HomeController controller = Get.put(HomeController());
+  final HomeController controller = Get.put(HomeController());
+  final ImageController imageController = Get.put(ImageController());
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.yellow,
+          backgroundColor: const Color.fromARGB(255, 67, 60, 0),
           actions: [
             InkWell(
               onTap: () {
                 controller.nameController.clear();
                 controller.numberController.clear();
+                imageController.img = '';
                 _bottomAddEditEmployeeView(
-                    text: 'ADD', addEditFlag: 1, docId: '');
+                    text: 'ADD', addEditFlag: 1, docId: '', image: '');
               },
               child: const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 30),
                 child: CircleAvatar(
+                  backgroundColor: Color.fromARGB(255, 194, 98, 13),
                   child: Icon(Icons.add),
                 ),
               ),
@@ -60,20 +66,25 @@ class HomePage extends StatelessWidget {
                       controller.nameController.text = documentSnapshot['name'];
                       controller.numberController.text =
                           documentSnapshot['number'];
-
+                      imageController.img = documentSnapshot['image'];
                       _bottomAddEditEmployeeView(
                           text: 'UPDATE',
                           addEditFlag: 2,
-                          docId: documentSnapshot.id);
+                          docId: documentSnapshot.id,
+                          image: documentSnapshot['image']);
                     },
                     child: Card(
+                      color: const Color.fromARGB(255, 250, 243, 181),
                       child: ListTile(
-                        leading: Image.network(
-                            "https://images.unsplash.com/photo-1453728013993-6d66e9c9123a?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8dmlld3xlbnwwfHwwfHw%3D&w=1000&q=80"),
+                        leading: Image.memory(const Base64Decoder()
+                            .convert(documentSnapshot['image'])),
                         title: Text(documentSnapshot['name']),
                         subtitle: Text(documentSnapshot['number'].toString()),
                         trailing: IconButton(
-                          icon: const Icon(Icons.delete),
+                          icon: const Icon(
+                            Icons.delete,
+                            color: Color.fromARGB(255, 255, 17, 0),
+                          ),
                           onPressed: () {
                             controller.deleteDialog(documentSnapshot.id);
                           },
@@ -93,9 +104,9 @@ class HomePage extends StatelessWidget {
         ));
   }
 
-  _bottomAddEditEmployeeView({String? text, int? addEditFlag, String? docId}) {
+  _bottomAddEditEmployeeView(
+      {String? image, String? text, int? addEditFlag, String? docId}) {
     Get.bottomSheet(Container(
-      //height: 1000,
       color: white,
       child: SingleChildScrollView(
         scrollDirection: Axis.vertical,
@@ -110,17 +121,37 @@ class HomePage extends StatelessWidget {
                   style: const TextStyle(
                       color: blue, fontSize: 15, fontWeight: FontWeight.bold),
                 ),
-                Stack(
-                  children: const [
-                    CircleAvatar(
-                      radius: 80,
-                      backgroundImage: AssetImage("assets/login_img.png"),
-                    ),
-                    Positioned(
-                        bottom: 0,
-                        right: 20,
-                        child: Icon(CupertinoIcons.person_add)),
-                  ],
+                InkWell(
+                  onTap: () {
+                    imageController.pickimage();
+                  },
+                  child: imageController.img == null
+                      ? Stack(
+                          children: const [
+                            CircleAvatar(
+                              radius: 80,
+                              backgroundImage:
+                                  AssetImage("assets/login_img.png"),
+                            ),
+                            Positioned(
+                                bottom: 0,
+                                right: 20,
+                                child: Icon(CupertinoIcons.person_add)),
+                          ],
+                        )
+                      : Stack(
+                          children: [
+                            CircleAvatar(
+                              radius: 80,
+                              backgroundImage: MemoryImage(const Base64Decoder()
+                                  .convert(imageController.img!)),
+                            ),
+                            const Positioned(
+                                bottom: 0,
+                                right: 20,
+                                child: Icon(CupertinoIcons.person_add)),
+                          ],
+                        ),
                 ),
                 CustomTextFormField(
                   hint: 'Name',
@@ -141,10 +172,12 @@ class HomePage extends StatelessWidget {
                 ElevatedButton(
                   onPressed: () {
                     controller.saveUpadateEmployee(
-                        controller.nameController.text,
-                        controller.numberController.text,
-                        docId!,
-                        addEditFlag!);
+                      controller.nameController.text,
+                      controller.numberController.text,
+                      docId!,
+                      addEditFlag!,
+                      image = imageController.img,
+                    );
                   },
                   //icon: const Icon(CupertinoIcons.person_add),
                   child: Text(addEditFlag == 1 ? 'Add' : 'Update'),

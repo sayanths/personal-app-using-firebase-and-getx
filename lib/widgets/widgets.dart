@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class CustomTextFormField extends StatelessWidget {
-  String hint;
-  TextEditingController controller;
+  final String hint;
+  final TextEditingController controller;
   final bool obscure;
   final IconData icon;
-  String? Function(String?)? validator;
-  CustomTextFormField(
+  final String? Function(String?)? validator;
+  const CustomTextFormField(
       {Key? key,
       required this.hint,
       required this.controller,
@@ -47,7 +47,7 @@ class CustomTextFormField extends StatelessWidget {
 }
 
 class CustomFullScreenDialog {
- static  showDialog() {
+  static showDialog() {
     Get.dialog(
       WillPopScope(
         child: const Center(
@@ -73,10 +73,16 @@ class CustomSnackBar {
     required String message,
     required Color backGround,
   }) {
-    Get.snackbar(title, message,
-        snackPosition: SnackPosition.TOP, backgroundColor: white,
-        titleText: Text(title,style: TextStyle(fontSize: 16),),
-        messageText: Text(message),
-        );
+    Get.snackbar(
+      title,
+      message,
+      snackPosition: SnackPosition.TOP,
+      backgroundColor: white,
+      titleText: Text(
+        title,
+        style: const TextStyle(fontSize: 16),
+      ),
+      messageText: Text(message),
+    );
   }
 }

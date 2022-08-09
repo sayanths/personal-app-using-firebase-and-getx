@@ -1,4 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_app/constants/constants.dart';
+import 'package:firebase_app/controllers/auth_controller/auth_controller.dart';
 import 'package:firebase_app/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -9,14 +11,14 @@ class HomeController extends GetxController {
   FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
   late CollectionReference collectionReference;
   final CollectionReference details =
-      FirebaseFirestore.instance.collection('details');
+      FirebaseFirestore.instance.collection(emailName);
 
   @override
   void onInit() {
     super.onInit();
     nameController = TextEditingController();
     numberController = TextEditingController();
-    collectionReference = firebaseFirestore.collection('details');
+    collectionReference = firebaseFirestore.collection(emailName);
   }
 
   String? validateName(String value) {
@@ -35,7 +37,12 @@ class HomeController extends GetxController {
 
 //code firestoreill save cheyan
   Future<void> saveUpadateEmployee(
-      String name, String number, String? docId, int addEditFlag) async {
+    String name,
+    String number,
+    String? docId,
+    int addEditFlag,
+    String? image,
+  ) async {
     final isValid = formKey.currentState!.validate();
     if (!isValid) {
       return;
@@ -43,8 +50,11 @@ class HomeController extends GetxController {
     formKey.currentState!.save();
     if (addEditFlag == 1) {
       CustomFullScreenDialog.showDialog();
-      await collectionReference
-          .add({'name': name, 'number': number}).whenComplete(() {
+      await collectionReference.add({
+        'name': name,
+        'number': number,
+        'image': image,
+      }).whenComplete(() {
         CustomFullScreenDialog.cancelDialog();
         clearEditingController();
         Get.back();
@@ -64,9 +74,11 @@ class HomeController extends GetxController {
       });
     } else if (addEditFlag == 2) {
       CustomFullScreenDialog.showDialog();
-      await collectionReference
-          .doc(docId)
-          .update({'name': name, 'number': number}).whenComplete(() {
+      await collectionReference.doc(docId).update({
+        'name': name,
+        'number': number,
+         'image': image,
+      }).whenComplete(() {
         CustomFullScreenDialog.cancelDialog();
         clearEditingController();
         Get.back();
@@ -89,12 +101,15 @@ class HomeController extends GetxController {
 
   deleteDialog(String docId) {
     Get.defaultDialog(
+      buttonColor: const Color.fromARGB(255, 119, 107, 2),
       title: 'Delete The data',
-      titleStyle: const TextStyle(fontSize: 20),
-      middleText: 'Do yu want to delete the data ?',
+      titleStyle: const TextStyle(fontSize: 12),
+      middleText: 'Do you want to delete the data ?',
       textCancel: 'cancel',
       textConfirm: 'confirm',
-      confirmTextColor: Colors.black,
+      backgroundColor: const Color.fromARGB(255, 186, 164, 162),
+      confirmTextColor: white,
+      cancelTextColor: white,
       onConfirm: () {
         deleteItem(docId);
         Get.back();

@@ -4,11 +4,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+String emailName = 'temp';
+
 class AuthController extends GetxController {
   static AuthController instance =
-      Get.find(); //creating an instance for auth controller
+      Get.find(); 
 
-  late Rx<User?> _user; //for firebase name email okke kitan
+  late Rx<User?> _user;
   final FirebaseAuth auth = FirebaseAuth.instance;
 
   @override
@@ -16,20 +18,21 @@ class AuthController extends GetxController {
     super.onReady();
     _user = Rx<User?>(auth.currentUser);
     _user.bindStream(auth
-        .authStateChanges()); //login logout all this operations will be notified becoz of this streambinding
+        .authStateChanges()); 
     ever(_user, initialScreen);
   }
 
   initialScreen(User? user) {
-    user == null
-        ? Get.offAll(() => LoginPage())
-        : Get.offAll(() =>  HomePage());
+    user == null ? Get.offAll(() => LoginPage()) : Get.offAll(() => HomePage());
   }
 
   void register(email, password) async {
     try {
       await auth.createUserWithEmailAndPassword(
-          email: email, password: password);
+        email: email,
+        password: password,
+      );
+      emailName = email;
     } on FirebaseAuthException catch (e) {
       Get.snackbar(" user", "login failed",
           // backgroundColor: Colors.red,
@@ -42,9 +45,10 @@ class AuthController extends GetxController {
   void login(String email, password) async {
     try {
       await auth.signInWithEmailAndPassword(email: email, password: password);
+      emailName = email;
     } catch (e) {
       Get.snackbar(
-        " About Login", "Please enter a valid id",
+        " About Login", "Please fullfill all the fields",
         backgroundColor: const Color.fromARGB(255, 245, 245, 245),
         snackPosition: SnackPosition.TOP,
         titleText: const Text("Login failed"),
