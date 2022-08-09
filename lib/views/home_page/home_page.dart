@@ -121,37 +121,47 @@ class HomePage extends StatelessWidget {
                   style: const TextStyle(
                       color: blue, fontSize: 15, fontWeight: FontWeight.bold),
                 ),
-                InkWell(
-                  onTap: () {
-                    imageController.pickimage();
-                  },
-                  child: imageController.img == null
-                      ? Stack(
-                          children: const [
-                            CircleAvatar(
-                              radius: 80,
-                              backgroundImage:
-                                  AssetImage("assets/login_img.png"),
-                            ),
-                            Positioned(
-                                bottom: 0,
-                                right: 20,
-                                child: Icon(CupertinoIcons.person_add)),
-                          ],
-                        )
-                      : Stack(
-                          children: [
-                            CircleAvatar(
-                              radius: 80,
-                              backgroundImage: MemoryImage(const Base64Decoder()
-                                  .convert(imageController.img!)),
-                            ),
-                            const Positioned(
-                                bottom: 0,
-                                right: 20,
-                                child: Icon(CupertinoIcons.person_add)),
-                          ],
+                GetBuilder<ImageController>(
+                  builder: (controller) {
+                    return Column(
+                      children: [
+                        InkWell(
+                          onTap: () {
+                            imageController.pickimage();
+                          },
+                          child: controller.img == null
+                              ? Stack(
+                                  children: const [
+                                    CircleAvatar(
+                                      radius: 80,
+                                      backgroundImage:
+                                          AssetImage("assets/login_img.png"),
+                                    ),
+                                    Positioned(
+                                        bottom: 0,
+                                        right: 20,
+                                        child: Icon(CupertinoIcons.person_add)),
+                                  ],
+                                )
+                              : Stack(
+                                  children: [
+                                    CircleAvatar(
+                                      radius: 80,
+                                      backgroundImage: MemoryImage(
+                                        const Base64Decoder()
+                                            .convert(imageController.img!),
+                                      ),
+                                    ),
+                                    const Positioned(
+                                        bottom: 0,
+                                        right: 20,
+                                        child: Icon(CupertinoIcons.person_add)),
+                                  ],
+                                ),
                         ),
+                      ],
+                    );
+                  },
                 ),
                 CustomTextFormField(
                   hint: 'Name',
